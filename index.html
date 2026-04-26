@@ -50,14 +50,17 @@
                 top: 50%;
                 left: 50%;
                 transform: translate(-50%, -50%);
+                transition: all 0.25s ease;
             }
         </style>
     </head>
     <body>
-        <video src="misha idle.mp4" muted autoplay loop class="button" id="mishaidleCutscene">
+        <video src="misha idle.mp4" muted autoplay loop class="button" style="opacity: 0;" id="mishaidleCutscene">
         </video>
+
+        <audio id="my_audio" src="sfx/ambience.mp3" loop="loop"></audio>
+        
         <button class="button" id="button" onclick="openCutscene()">
-            
             <video preload src="misha open.mp4" style="display: none;" class="button" id="firstOpenCutscene">
             </video>
             <video preload src="open.mp4" class="button" style="display: none;" id="openCutscene">
@@ -88,17 +91,25 @@
         
 
         <script>
+            var opened = false
+            var first_open = true
+            var cooldown = false
+            var current_page = 1
+            var pages = 6
             
             const images = [];
             for (let i = 1; i <= 10; i++) {
                 images.push(`pages/${i}.png`);
             }
 
-            var opened = false
-            var first_open = true
-            var cooldown = false
-            var current_page = 1
-            var pages = 6
+            var mishaidle = document.getElementById("mishaidleCutscene");
+            cooldown = true
+            setTimeout(() => {
+                mishaidle.style.opacity = '1'
+            }, 500);
+            setTimeout(() => {
+                cooldown = false
+            }, 700);
 
             function openCutscene(){
 
@@ -111,10 +122,17 @@
                 if (cooldown == true) {
                     return
                 }
-                cooldown = true
-                setTimeout(() => {
-                    cooldown = false
-                }, 1500);
+                if (first_open) {
+                    cooldown = true
+                    setTimeout(() => {
+                        cooldown = false
+                    }, 4350);
+                } else {
+                    cooldown = true
+                    setTimeout(() => {
+                        cooldown = false
+                    }, 1200);
+                }
                 if (opened) {
                     if (current_page == 1) {
                         x2.play()
@@ -126,7 +144,10 @@
                         leftb.style.display = 'none'
                         rightb.style.display = 'none'
                         
-                        page_image.style.display = 'none'
+                        page_image.style.opacity = '0'
+                        setTimeout(() => {
+                            page_image.style.display = 'none'
+                        }, 300);
                     }
                 } else {
                     if (first_open) {
@@ -141,15 +162,23 @@
                             opencut.style.display = "none"
                             opened = true
 
-                            page_image.style.display = 'none'
-                            page_image.src = images[current_page-1]
-                            // page_image.src = 'pages/1.png'
                             page_image.style.display = 'block'
-                            page_image.load()
+                            page_image.style.opacity = '0'
+                            setTimeout(() => {
+                                page_image.src = images[current_page-1]
+                                // page_image.src = 'pages/1.png'
+                                // page_image.style.display = 'block'
+                                page_image.style.opacity = '1'
+                                page_image.load()
+                            
+                                leftb.style.display = 'block'
+                                rightb.style.display = 'block'
+                                console.log(images[current_page-1])
+                            }, 100);
     
                             leftb.style.display = 'block'
                             rightb.style.display = 'block'
-                        }, 4500);
+                        }, 4350);
                         
                         return
                     }
@@ -160,17 +189,19 @@
                         opened = true
                     }, 1000);
                     
-                    page_image.style.display = 'none'
+                    page_image.style.display = 'block'
+                    page_image.style.opacity = '0'
                     setTimeout(() => {
                         page_image.src = images[current_page-1]
                         // page_image.src = 'pages/1.png'
-                        page_image.style.display = 'block'
+                        // page_image.style.display = 'block'
+                        page_image.style.opacity = '1'
                         page_image.load()
 
                         leftb.style.display = 'block'
                         rightb.style.display = 'block'
                         console.log(images[current_page-1])
-                    }, 700);
+                    }, 900);
                 }
             }
             function flipPage(rightSw){
@@ -196,9 +227,10 @@
                     if (rightSw == true) {
                         if (current_page >= pages) { return }
 
-                        var snd = new Audio("sfx/Page_turn1.ogg");
-                        snd.play();
-                        snd.currentTime=0;
+                        var page_flip = new Audio("sfx/Page_turn1.ogg");
+                        page_flip.loop = false;
+                        page_flip.play();
+                        page_flip.currentTime=0;
 
                         if (current_page <= 1) {
                             page.play()
@@ -219,9 +251,9 @@
                     } else {
                         if (current_page <= 1) { return }
 
-                        var snd = new Audio("sfx/Page_turn2.ogg");
-                        snd.play();
-                        snd.currentTime=0;
+                        var page_flip2 = new Audio("sfx/Page_turn2.ogg");
+                        page_flip2.play();
+                        page_flip2.currentTime=0;
 
                         if (current_page <= 2) {
                             back_page.style.display = "block"
@@ -253,12 +285,17 @@
                         current_page = current_page - 1
                     }
                     page_image.style.display = 'none'
+                    page_image.style.opacity = '0'
+                    page_image.style.display = 'block'
+                    setTimeout(() => {
+                    }, 100);
                     setTimeout(() => {
                         page_image.poster = images[current_page-1]
                         page_image.style.display = 'block'
+                        page_image.style.opacity = '1'
                         page_image.load()
                         console.log(images[current_page-1])
-                    }, 700);
+                    }, 425);
                 }
             }
         </script>
