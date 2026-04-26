@@ -9,6 +9,8 @@
             }
             
             .leftbutton {
+                background-image: url('left-button.png');
+                background-color: #00000000;
                 position: absolute;
                 background-size: cover;
                 background-repeat: no-repeat;
@@ -22,6 +24,8 @@
                 transform: translate(-50%, -50%);
             }
             .rightbutton {
+                background-image: url('right-button.png');
+                background-color: #00000000;
                 position: absolute;
                 background-size: cover;
                 background-repeat: no-repeat;
@@ -35,6 +39,7 @@
                 transform: translate(-50%, -50%);
             }
             .button {
+                background-color: #00000000;
                 position: absolute;
                 background-repeat: no-repeat;
                 background-position: center; /* Centers the image so cropping occurs equally on all sides */
@@ -49,9 +54,13 @@
         </style>
     </head>
     <body>
+        <video src="misha idle.mp4" muted autoplay loop class="button" id="mishaidleCutscene">
+        </video>
         <button class="button" id="button" onclick="openCutscene()">
             
-            <video preload src="open.mp4" class="button" id="openCutscene">
+            <video preload src="misha open.mp4" style="display: none;" class="button" id="firstOpenCutscene">
+            </video>
+            <video preload src="open.mp4" class="button" style="display: none;" id="openCutscene">
             </video>
             <video preload src="close.mp4" class="button" style="display: none;" id="closeCutscene">
             </video>
@@ -72,29 +81,13 @@
             <video preload poster="pages/1.png" class="button" style="display: none;" id="page_image"></video>
 
         </button>
-        <button class="leftbutton" id="button" onclick="flipPage(false)">
+        <button class="leftbutton" id="leftbutton" style="display: none;" onclick="flipPage(false)">
         </button>
-        <button class="rightbutton" id="button" onclick="flipPage(true)">
+        <button class="rightbutton" id="rightbutton" style="display: none;" onclick="flipPage(true)">
         </button>
         
 
         <script>
-            HTMLVideoElement.prototype.playBackwards = function() {
-                this.pause();
-
-                var video = this;
-
-                var fps = 30;
-                var intervalRewind = setInterval(function() {
-                    if(video.currentTime == 0){
-                       clearInterval(intervalRewind);
-                       video.pause();
-                    }
-                    else {
-                        video.currentTime += -(1/fps);
-                    }
-                }, 1000 / fps);
-            };
             
             const images = [];
             for (let i = 1; i <= 10; i++) {
@@ -102,14 +95,19 @@
             }
 
             var opened = false
+            var first_open = true
             var cooldown = false
             var current_page = 1
-            var pages = 5
+            var pages = 6
 
             function openCutscene(){
 
+                var opencut = document.getElementById("firstOpenCutscene");
                 var x = document.getElementById("openCutscene");
                 var x2 = document.getElementById("closeCutscene");
+
+                var leftb = document.getElementById("leftbutton");
+                var rightb = document.getElementById("rightbutton");
                 if (cooldown == true) {
                     return
                 }
@@ -125,10 +123,36 @@
                         setTimeout(() => {
                             opened = false
                         }, 1000);
-
+                        leftb.style.display = 'none'
+                        rightb.style.display = 'none'
+                        
                         page_image.style.display = 'none'
                     }
                 } else {
+                    if (first_open) {
+                        first_open = false
+                        x.play()
+                        opencut.play()
+                        opencut.style.display = "block"
+                        x2.style.display = "none"
+                        setTimeout(() => {
+                            
+                            x.style.display = "block"
+                            opencut.style.display = "none"
+                            opened = true
+
+                            page_image.style.display = 'none'
+                            page_image.src = images[current_page-1]
+                            // page_image.src = 'pages/1.png'
+                            page_image.style.display = 'block'
+                            page_image.load()
+    
+                            leftb.style.display = 'block'
+                            rightb.style.display = 'block'
+                        }, 4500);
+                        
+                        return
+                    }
                     x.play()
                     x2.style.display = "none"
                     x.style.display = "block"
@@ -142,6 +166,9 @@
                         // page_image.src = 'pages/1.png'
                         page_image.style.display = 'block'
                         page_image.load()
+
+                        leftb.style.display = 'block'
+                        rightb.style.display = 'block'
                         console.log(images[current_page-1])
                     }, 700);
                 }
@@ -164,9 +191,14 @@
                 setTimeout(() => {
                     cooldown = false
                 }, 1000);
+
                 if (opened) {
                     if (rightSw == true) {
                         if (current_page >= pages) { return }
+
+                        var snd = new Audio("sfx/Page_turn1.ogg");
+                        snd.play();
+                        snd.currentTime=0;
 
                         if (current_page <= 1) {
                             page.play()
@@ -186,6 +218,10 @@
                         current_page = current_page + 1
                     } else {
                         if (current_page <= 1) { return }
+
+                        var snd = new Audio("sfx/Page_turn2.ogg");
+                        snd.play();
+                        snd.currentTime=0;
 
                         if (current_page <= 2) {
                             back_page.style.display = "block"
