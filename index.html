@@ -1,0 +1,230 @@
+<html>
+    <head>
+        <title>???</title>
+        
+        <style>
+            BODY {
+                background: #000000;
+                font-family: 'Courier New', Courier, monospace;
+            }
+            
+            .leftbutton {
+                position: absolute;
+                background-size: cover;
+                background-repeat: no-repeat;
+                background-position: center; /* Centers the image so cropping occurs equally on all sides */
+                image-rendering: pixelated;
+                width: 100px;
+                height: 100px;
+                border: none;
+                top: 50%;
+                left: 15%;
+                transform: translate(-50%, -50%);
+            }
+            .rightbutton {
+                position: absolute;
+                background-size: cover;
+                background-repeat: no-repeat;
+                background-position: center; /* Centers the image so cropping occurs equally on all sides */
+                image-rendering: pixelated;
+                width: 100px;
+                height: 100px;
+                border: none;
+                top: 50%;
+                left: 85%;
+                transform: translate(-50%, -50%);
+            }
+            .button {
+                position: absolute;
+                background-repeat: no-repeat;
+                background-position: center; /* Centers the image so cropping occurs equally on all sides */
+                image-rendering: pixelated;
+                width: 100%;
+                height: 100%;
+                border: none;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+        </style>
+    </head>
+    <body>
+        <button class="button" id="button" onclick="openCutscene()">
+            
+            <video preload src="open.mp4" class="button" id="openCutscene">
+            </video>
+            <video preload src="close.mp4" class="button" style="display: none;" id="closeCutscene">
+            </video>
+            <video preload src="flip page start.mp4" class="button" style="display: none;" id="flipstartpageCutscene">
+            </video>
+            <video preload src="flip page middle.mp4" class="button" style="display: none;" id="flipmiddlepageCutscene">
+            </video>
+            <video preload src="flip page end.mp4" class="button" style="display: none;" id="flipendpageCutscene">
+            </video>
+
+            <video preload src="back flip page start.mp4" class="button" style="display: none;" id="back_flipstartpageCutscene">
+            </video>
+            <video preload src="back flip page middle.mp4" class="button" style="display: none;" id="back_flipmiddlepageCutscene">
+            </video>
+            <video preload src="back flip page end.mp4" class="button" style="display: none;" id="back_flipendpageCutscene">
+            </video>
+            
+            <video preload poster="pages/1.png" class="button" style="display: none;" id="page_image"></video>
+
+        </button>
+        <button class="leftbutton" id="button" onclick="flipPage(false)">
+        </button>
+        <button class="rightbutton" id="button" onclick="flipPage(true)">
+        </button>
+        
+
+        <script>
+            HTMLVideoElement.prototype.playBackwards = function() {
+                this.pause();
+
+                var video = this;
+
+                var fps = 30;
+                var intervalRewind = setInterval(function() {
+                    if(video.currentTime == 0){
+                       clearInterval(intervalRewind);
+                       video.pause();
+                    }
+                    else {
+                        video.currentTime += -(1/fps);
+                    }
+                }, 1000 / fps);
+            };
+            
+            const images = [];
+            for (let i = 1; i <= 10; i++) {
+                images.push(`pages/${i}.png`);
+            }
+
+            var opened = false
+            var cooldown = false
+            var current_page = 1
+            var pages = 5
+
+            function openCutscene(){
+
+                var x = document.getElementById("openCutscene");
+                var x2 = document.getElementById("closeCutscene");
+                if (cooldown == true) {
+                    return
+                }
+                cooldown = true
+                setTimeout(() => {
+                    cooldown = false
+                }, 1500);
+                if (opened) {
+                    if (current_page == 1) {
+                        x2.play()
+                        x2.style.display = "block"
+                        x.style.display = "none"
+                        setTimeout(() => {
+                            opened = false
+                        }, 1000);
+
+                        page_image.style.display = 'none'
+                    }
+                } else {
+                    x.play()
+                    x2.style.display = "none"
+                    x.style.display = "block"
+                    setTimeout(() => {
+                        opened = true
+                    }, 1000);
+                    
+                    page_image.style.display = 'none'
+                    setTimeout(() => {
+                        page_image.src = images[current_page-1]
+                        // page_image.src = 'pages/1.png'
+                        page_image.style.display = 'block'
+                        page_image.load()
+                        console.log(images[current_page-1])
+                    }, 700);
+                }
+            }
+            function flipPage(rightSw){
+                var page_image = document.getElementById("page_image");
+
+                var page = document.getElementById("flipstartpageCutscene");
+                var page_middle = document.getElementById("flipmiddlepageCutscene");
+                var page_end = document.getElementById("flipendpageCutscene");
+
+                var back_page = document.getElementById("back_flipstartpageCutscene");
+                var back_page_middle = document.getElementById("back_flipmiddlepageCutscene");
+                var back_page_end = document.getElementById("back_flipendpageCutscene");
+
+                if (cooldown == true) {
+                    return
+                }
+                cooldown = true
+                setTimeout(() => {
+                    cooldown = false
+                }, 1000);
+                if (opened) {
+                    if (rightSw == true) {
+                        if (current_page >= pages) { return }
+
+                        if (current_page <= 1) {
+                            page.play()
+                            page.style.display = "block"
+                            page_middle.style.display = "none"
+                        } else if (current_page == pages-1) {
+                            page_end.play()
+                            page_middle.style.display = "none"
+                            page_end.style.display = "block"
+                        } else {
+                            page_middle.play()
+                            page.style.display = "none"
+                            page_middle.style.display = "block"
+                            page_end.style.display = "none"
+                        }
+                        
+                        current_page = current_page + 1
+                    } else {
+                        if (current_page <= 1) { return }
+
+                        if (current_page <= 2) {
+                            back_page.style.display = "block"
+                            back_page.play()
+                            page.style.display = "none"
+                            page_middle.style.display = "none"
+                            setTimeout(() => {
+                                back_page.style.display = "none"
+                                page_end.style.display = "none"
+                            }, 1000);
+                        } else if (current_page == pages) {
+                            back_page_end.style.display = "block"
+                            back_page_end.play()
+                            setTimeout(() => {
+                                back_page_end.style.display = "none"
+                                page_end.style.display = "none"
+                                page_middle.style.display = "block"
+                            }, 1000);
+                        } else {
+                            back_page_middle.style.display = "block"
+                            back_page_middle.play()
+                            page.style.display = "none"
+                            page_end.style.display = "none"
+                            page_middle.style.display = "block"
+                            setTimeout(() => {
+                                back_page_middle.style.display = "none"
+                            }, 1000);
+                        }
+                        current_page = current_page - 1
+                    }
+                    page_image.style.display = 'none'
+                    setTimeout(() => {
+                        page_image.poster = images[current_page-1]
+                        page_image.style.display = 'block'
+                        page_image.load()
+                        console.log(images[current_page-1])
+                    }, 700);
+                }
+            }
+        </script>
+    </body>
+</html>
