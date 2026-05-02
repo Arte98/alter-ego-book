@@ -1,6 +1,6 @@
 <html>
     <head>
-        <title>???</title>
+        <title>FNAF 6 REFERENCE 100%</title>
         
         <style>
             BODY {
@@ -44,6 +44,20 @@
                 background-repeat: no-repeat;
                 background-position: center; /* Centers the image so cropping occurs equally on all sides */
                 image-rendering: pixelated;
+                width: 70%;
+                height: 85%;
+                border: none;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                transition: all 0.25s ease;
+            }
+            .video {
+                background-color: #00000000;
+                position: absolute;
+                background-repeat: no-repeat;
+                background-position: center; /* Centers the image so cropping occurs equally on all sides */
+                image-rendering: pixelated;
                 width: 100%;
                 height: 100%;
                 border: none;
@@ -55,249 +69,50 @@
         </style>
     </head>
     <body>
-        <video src="misha idle.mp4" muted autoplay loop class="button" style="opacity: 0;" id="mishaidleCutscene">
+        <video src="videos/misha idle.mp4" muted autoplay loop class="video" style="opacity: 0;" id="mishaidleCutscene">
         </video>
 
-        <audio id="my_audio" src="sfx/ambience.mp3" loop="loop"></audio>
+        <video preload src="videos/misha open.mp4" style="display: none;" class="video" id="firstOpenCutscene">
+        </video>
+        
+        <video preload src="videos/open.mp4" class="video" style="display: none;" id="openCutscene">
+        </video>
+        
+        <video preload src="videos/close.mp4" class="video" style="display: none;" id="closeCutscene">
+        </video>
+        
+        <video preload src="videos/flip page start.mp4" class="video" style="display: none;" id="flipstartpageCutscene">
+        </video>
+        
+        <video preload src="videos/flip page middle.mp4" class="video" style="display: none;" id="flipmiddlepageCutscene">
+        </video>
+        
+        <video preload src="videos/flip page end.mp4" class="video" style="display: none;" id="flipendpageCutscene">
+        </video>
+
+        <video preload src="videos/back flip page start.mp4" class="video" style="display: none;" id="back_flipstartpageCutscene">
+        </video>
+        
+        <video preload src="videos/back flip page middle.mp4" class="video" style="display: none;" id="back_flipmiddlepageCutscene">
+        </video>
+        
+        <video preload src="videos/back flip page end.mp4" class="video" style="display: none;" id="back_flipendpageCutscene">
+        </video>
+        
+        <video preload poster="pages/1.png" class="video" style="display: none;" id="page_image"></video>
+
+        <audio id="ambience_sfx" src="sfx/ambience.mp3" loop="loop"></audio>
         
         <button class="button" id="button" onclick="openCutscene()">
-            <video preload src="misha open.mp4" style="display: none;" class="button" id="firstOpenCutscene">
-            </video>
-            <video preload src="open.mp4" class="button" style="display: none;" id="openCutscene">
-            </video>
-            <video preload src="close.mp4" class="button" style="display: none;" id="closeCutscene">
-            </video>
-            <video preload src="flip page start.mp4" class="button" style="display: none;" id="flipstartpageCutscene">
-            </video>
-            <video preload src="flip page middle.mp4" class="button" style="display: none;" id="flipmiddlepageCutscene">
-            </video>
-            <video preload src="flip page end.mp4" class="button" style="display: none;" id="flipendpageCutscene">
-            </video>
-
-            <video preload src="back flip page start.mp4" class="button" style="display: none;" id="back_flipstartpageCutscene">
-            </video>
-            <video preload src="back flip page middle.mp4" class="button" style="display: none;" id="back_flipmiddlepageCutscene">
-            </video>
-            <video preload src="back flip page end.mp4" class="button" style="display: none;" id="back_flipendpageCutscene">
-            </video>
-            
-            <video preload poster="pages/1.png" class="button" style="display: none;" id="page_image"></video>
-
         </button>
+
         <button class="leftbutton" id="leftbutton" style="display: none;" onclick="flipPage(false)">
         </button>
+        
         <button class="rightbutton" id="rightbutton" style="display: none;" onclick="flipPage(true)">
         </button>
         
-
-        <script>
-            var opened = false
-            var first_open = true
-            var cooldown = false
-            var current_page = 1
-            var pages = 3
-            
-            const images = [];
-            for (let i = 1; i <= 10; i++) {
-                images.push(`pages/${i}.png`);
-            }
-
-            var mishaidle = document.getElementById("mishaidleCutscene");
-            cooldown = true
-            setTimeout(() => {
-                mishaidle.style.opacity = '1'
-            }, 500);
-            setTimeout(() => {
-                cooldown = false
-            }, 700);
-
-            function openCutscene(){
-
-                var opencut = document.getElementById("firstOpenCutscene");
-                var x = document.getElementById("openCutscene");
-                var x2 = document.getElementById("closeCutscene");
-
-                var leftb = document.getElementById("leftbutton");
-                var rightb = document.getElementById("rightbutton");
-                if (cooldown == true) {
-                    return
-                }
-                if (first_open) {
-                    cooldown = true
-                    setTimeout(() => {
-                        cooldown = false
-                    }, 4350);
-                } else {
-                    cooldown = true
-                    setTimeout(() => {
-                        cooldown = false
-                    }, 1200);
-                }
-                if (opened) {
-                    if (current_page == 1) {
-                        x2.play()
-                        x2.style.display = "block"
-                        x.style.display = "none"
-                        setTimeout(() => {
-                            opened = false
-                        }, 1000);
-                        leftb.style.display = 'none'
-                        rightb.style.display = 'none'
-                        
-                        page_image.style.opacity = '0'
-                        setTimeout(() => {
-                            page_image.style.display = 'none'
-                        }, 300);
-                    }
-                } else {
-                    if (first_open) {
-                        first_open = false
-                        x.play()
-                        opencut.play()
-                        opencut.style.display = "block"
-                        x2.style.display = "none"
-                        setTimeout(() => {
-                            
-                            x.style.display = "block"
-                            opencut.style.display = "none"
-                            opened = true
-
-                            page_image.style.display = 'block'
-                            page_image.style.opacity = '0'
-                            setTimeout(() => {
-                                page_image.src = images[current_page-1]
-                                // page_image.src = 'pages/1.png'
-                                // page_image.style.display = 'block'
-                                page_image.style.opacity = '1'
-                                page_image.load()
-                            
-                                leftb.style.display = 'block'
-                                rightb.style.display = 'block'
-                                console.log(images[current_page-1])
-                            }, 100);
-    
-                            leftb.style.display = 'block'
-                            rightb.style.display = 'block'
-                        }, 4350);
-                        
-                        return
-                    }
-                    x.play()
-                    x2.style.display = "none"
-                    x.style.display = "block"
-                    setTimeout(() => {
-                        opened = true
-                    }, 1000);
-                    
-                    page_image.style.display = 'block'
-                    page_image.style.opacity = '0'
-                    setTimeout(() => {
-                        page_image.src = images[current_page-1]
-                        // page_image.src = 'pages/1.png'
-                        // page_image.style.display = 'block'
-                        page_image.style.opacity = '1'
-                        page_image.load()
-
-                        leftb.style.display = 'block'
-                        rightb.style.display = 'block'
-                        console.log(images[current_page-1])
-                    }, 900);
-                }
-            }
-            function flipPage(rightSw){
-                var page_image = document.getElementById("page_image");
-
-                var page = document.getElementById("flipstartpageCutscene");
-                var page_middle = document.getElementById("flipmiddlepageCutscene");
-                var page_end = document.getElementById("flipendpageCutscene");
-
-                var back_page = document.getElementById("back_flipstartpageCutscene");
-                var back_page_middle = document.getElementById("back_flipmiddlepageCutscene");
-                var back_page_end = document.getElementById("back_flipendpageCutscene");
-
-                if (cooldown == true) {
-                    return
-                }
-                cooldown = true
-                setTimeout(() => {
-                    cooldown = false
-                }, 1000);
-
-                if (opened) {
-                    if (rightSw == true) {
-                        if (current_page >= pages) { return }
-
-                        var page_flip = new Audio("sfx/Page_turn1.ogg");
-                        page_flip.loop = false;
-                        page_flip.play();
-                        page_flip.currentTime=0;
-
-                        if (current_page <= 1) {
-                            page.play()
-                            page.style.display = "block"
-                            page_middle.style.display = "none"
-                        } else if (current_page == pages-1) {
-                            page_end.play()
-                            page_middle.style.display = "none"
-                            page_end.style.display = "block"
-                        } else {
-                            page_middle.play()
-                            page.style.display = "none"
-                            page_middle.style.display = "block"
-                            page_end.style.display = "none"
-                        }
-                        
-                        current_page = current_page + 1
-                    } else {
-                        if (current_page <= 1) { return }
-
-                        var page_flip2 = new Audio("sfx/Page_turn2.ogg");
-                        page_flip2.play();
-                        page_flip2.currentTime=0;
-
-                        if (current_page <= 2) {
-                            back_page.style.display = "block"
-                            back_page.play()
-                            page.style.display = "none"
-                            page_middle.style.display = "none"
-                            setTimeout(() => {
-                                back_page.style.display = "none"
-                                page_end.style.display = "none"
-                            }, 1000);
-                        } else if (current_page == pages) {
-                            back_page_end.style.display = "block"
-                            back_page_end.play()
-                            setTimeout(() => {
-                                back_page_end.style.display = "none"
-                                page_end.style.display = "none"
-                                page_middle.style.display = "block"
-                            }, 1000);
-                        } else {
-                            back_page_middle.style.display = "block"
-                            back_page_middle.play()
-                            page.style.display = "none"
-                            page_end.style.display = "none"
-                            page_middle.style.display = "block"
-                            setTimeout(() => {
-                                back_page_middle.style.display = "none"
-                            }, 1000);
-                        }
-                        current_page = current_page - 1
-                    }
-                    page_image.style.display = 'none'
-                    page_image.style.opacity = '0'
-                    page_image.style.display = 'block'
-                    setTimeout(() => {
-                    }, 100);
-                    setTimeout(() => {
-                        page_image.poster = images[current_page-1]
-                        page_image.style.display = 'block'
-                        page_image.style.opacity = '1'
-                        page_image.load()
-                        console.log(images[current_page-1])
-                    }, 425);
-                }
-            }
-        </script>
+        <script src="data.js"></script>
+        <script src="script.js"></script>
     </body>
 </html>
